@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\ExchangeRate;
 use App\Libs\ExchangeRateLib;
 use App\Models\Product;
 use App\Services\Product\ProductReadService;
@@ -22,7 +23,7 @@ class ProductController extends Controller
     public function index(Request $request): \Illuminate\Contracts\View\View
     {
         $products = $this->productReadService->paginate(9, $request->page ?: 1);
-        $exchangeRate = ExchangeRateLib::get();
+        $exchangeRate = ExchangeRate::get();
         return View::make('products.list', compact('products', 'exchangeRate'));
     }
 
@@ -34,7 +35,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): \Illuminate\Contracts\View\View
     {
-        $exchangeRate = ExchangeRateLib::get();
+        $exchangeRate = ExchangeRate::get();
 
         return View::make('products.show', compact('product', 'exchangeRate'));
     }

@@ -2,9 +2,13 @@
 
 namespace Tests\Feature\Product;
 
+use App\Facades\ExchangeRate;
+use App\Libs\ExchangeRateLib;
 use App\Models\Product;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Config;
+use Symfony\Component\Intl\Currencies;
 use Tests\Feature\BaseTest;
 
 class ProductReadTest extends BaseTest
@@ -73,8 +77,25 @@ class ProductReadTest extends BaseTest
         $response->assertStatus(200);
     }
 
+    private function mockExchangeRate(): void
+    {
+        $from = strtoupper(Config::get('external.exchange-rate.base_from_currency'));
+        $to = strtoupper(Config::get('external.exchange-rate.base_to_currency'));
+        ExchangeRate::shouldReceive('get')
+            ->once()
+            ->andReturn([
+                'value' => 0.8,
+                'from' => $from,
+                'from_symbol' => Currencies::getSymbol($from),
+                'to' => $to,
+                'to_symbol' => Currencies::getSymbol($to)
+            ]);
+    }
+
     public function test_get_products_list_guest_page(): void
     {
+        $this->mockExchangeRate();
+
         $response = $this->get('/');
 
         $response->assertStatus(200);
@@ -85,10 +106,16 @@ class ProductReadTest extends BaseTest
         $products = $response->viewData('products');
         $this->assertCount(9, $products->items());
         $this->assertEquals(20, $products->total());
+
+        // The value coming from mocking.
+        $exchangeRate = $response->viewData('exchangeRate');
+        $this->assertEquals(0.8, $exchangeRate['value']);
     }
 
     public function test_get_product_guest_page(): void
     {
+        $this->mockExchangeRate();
+
         $product = Product::query()->first();
 
         $response = $this->get("/products/{$product->id}");
@@ -103,6 +130,10 @@ class ProductReadTest extends BaseTest
         $this->assertEquals($product->description, $viewProduct->description);
         $this->assertEquals($product->price, $viewProduct->price);
         $this->assertEquals($product->image, $viewProduct->image);
+
+        // The value coming from mocking.
+        $exchangeRate = $response->viewData('exchangeRate');
+        $this->assertEquals(0.8, $exchangeRate['value']);
     }
 
     public function test_get_product_guest_page_with_not_existing_product(): void
