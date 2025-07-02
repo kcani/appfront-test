@@ -34,7 +34,7 @@ class LoginController extends Controller
             return redirect()->back()->with('error', 'Invalid login credentials');
         }
 
-        return redirect()->route('admin.products');
+        return redirect()->route('admin.products.index');
     }
 
     /**

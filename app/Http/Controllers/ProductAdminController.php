@@ -12,19 +12,57 @@ use Illuminate\Support\Facades\View;
 
 class ProductAdminController extends Controller
 {
-    public function products(): \Illuminate\Contracts\View\View
+    public function index(): \Illuminate\Contracts\View\View
     {
         $products = Product::all();
-        return View::make('admin.products', compact('products'));
+        return View::make('admin.products.list', compact('products'));
     }
 
-    public function editProduct($id): \Illuminate\Contracts\View\View
+    public function create(): \Illuminate\Contracts\View\View
+    {
+        return View::make('admin.products.create');
+    }
+
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:3',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $product = Product::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = $file->getClientOriginalExtension();
+            $file->move(public_path('uploads'), $filename);
+            $product->image = 'uploads/' . $filename;
+        } else {
+            $product->image = 'product-placeholder.jpg';
+        }
+
+        $product->save();
+
+        return redirect()->route('admin.products.index')->with('success', 'Product added successfully');
+    }
+
+    public function edit($id): \Illuminate\Contracts\View\View
     {
         $product = Product::find($id);
-        return View::make('admin.edit_product', compact('product'));
+        return View::make('admin.products.edit', compact('product'));
     }
 
-    public function updateProduct(Request $request, $id): \Illuminate\Http\RedirectResponse
+    public function update(Request $request, $id): \Illuminate\Http\RedirectResponse
     {
         // Validate the name field
         $validator = Validator::make($request->all(), [
@@ -71,52 +109,14 @@ class ProductAdminController extends Controller
             }
         }
 
-        return redirect()->route('admin.products')->with('success', 'Product updated successfully');
+        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully');
     }
 
-    public function deleteProduct($id): \Illuminate\Http\RedirectResponse
+    public function destroy($id): \Illuminate\Http\RedirectResponse
     {
         $product = Product::find($id);
         $product->delete();
 
-        return redirect()->route('admin.products')->with('success', 'Product deleted successfully');
-    }
-
-    public function addProductForm(): \Illuminate\Contracts\View\View
-    {
-        return View::make('admin.add_product');
-    }
-
-    public function addProduct(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price
-        ]);
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $filename);
-            $product->image = 'uploads/' . $filename;
-        } else {
-            $product->image = 'product-placeholder.jpg';
-        }
-
-        $product->save();
-
-        return redirect()->route('admin.products')->with('success', 'Product added successfully');
+        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully');
     }
 }
