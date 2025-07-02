@@ -26,7 +26,7 @@ class ProductUpdateService
              * @var FileUploaderService $imageUploaderService
              */
             $fileUploaderService = app(FileUploaderService::class);
-            $data['image'] = $fileUploaderService->upload($data['image'], $product->id);
+            $data['image'] = $fileUploaderService->upload($data['image'], "products/{$product->id}");
         }
         $product->fill($data);
         $product->save();

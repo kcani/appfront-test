@@ -21,7 +21,7 @@ class Product extends Model
     /**
      * This is the image path of tha image used as default for the product entities.
      */
-    const DEFAULT_IMAGE_NAME = 'product-placeholder.jpg';
+    const DEFAULT_IMAGE_PATH = '/images/product-placeholder.jpg';
 
     /**
      * Define the fillable properties.
@@ -43,7 +43,9 @@ class Product extends Model
     public function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->image ? config('app.url') . '/' . $this->image : null
+            get: fn () => !$this->image
+                ? self::DEFAULT_IMAGE_PATH
+                : route('products.image', $this->id),
         );
     }
 }

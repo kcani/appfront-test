@@ -12,7 +12,7 @@ class ProductDeleteService
         $product->delete();
 
         // Remove the image.
-        if ($productImagePath != Product::DEFAULT_IMAGE_NAME && file_exists($productImagePath)) {
+        if ($productImagePath != Product::DEFAULT_IMAGE_PATH && file_exists($productImagePath)) {
             unlink($productImagePath);
         }
     }

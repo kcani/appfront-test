@@ -38,4 +38,9 @@ class ProductController extends Controller
 
         return View::make('products.show', compact('product', 'exchangeRate'));
     }
+
+    public function image(Product $product): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        return $this->productReadService->readStreamedImage($product);
+    }
 }

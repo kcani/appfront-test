@@ -21,8 +21,6 @@ class ProductCreateService
         if (array_key_exists('image', $data) && $data['image'] instanceof UploadedFile) {
             $file = $data['image'];
             unset($data['image']);
-        } else {
-            $data['image'] = Product::DEFAULT_IMAGE_NAME;
         }
 
         $product->fill($data);
@@ -33,7 +31,7 @@ class ProductCreateService
              * @var FileUploaderService $imageUploaderService
              */
             $fileUploaderService = app(FileUploaderService::class);
-            $product->image = $fileUploaderService->upload($file, (string) $product->id);
+            $product->image = $fileUploaderService->upload($file, "products/{$product->id}");
             $product->save();
         }
 

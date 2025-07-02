@@ -4,6 +4,7 @@ namespace App\Services\Product;
 
 use App\Models\Product;
 use \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class ProductReadService
 {
@@ -28,5 +29,10 @@ class ProductReadService
     public function readById(int $id): Product
     {
         return Product::query()->find($id);
+    }
+
+    public function readStreamedImage(Product $product): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        return Storage::response($product->image);
     }
 }
