@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
+        $products = Product::query()->paginate(9);
         $exchangeRate = ExchangeRateLib::get();
 
         return view('products.list', compact('products', 'exchangeRate'));
