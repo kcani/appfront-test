@@ -6,7 +6,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/scss/guest.scss'
+                'resources/scss/guest.scss',
+                'resources/scss/admin.scss',
             ],
             refresh: true,
         }),
