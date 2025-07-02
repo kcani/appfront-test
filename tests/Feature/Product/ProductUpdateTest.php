@@ -4,12 +4,9 @@ namespace Tests\Feature\Product;
 
 use App\Models\Product;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\Feature\BaseTest;
-use Tests\TestCase;
 
 class ProductUpdateTest extends BaseTest
 {
