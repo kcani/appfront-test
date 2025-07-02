@@ -3,17 +3,17 @@
 namespace App\Services\Product;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductDeleteService
 {
     public function delete(Product $product): void
     {
-        $productImagePath = $product->image;
         $product->delete();
 
         // Remove the image.
-        if ($productImagePath != Product::DEFAULT_IMAGE_PATH && file_exists($productImagePath)) {
-            unlink($productImagePath);
+        if ($product->image && Storage::exists($product->image)) {
+            Storage::exists($product->image);
         }
     }
 }

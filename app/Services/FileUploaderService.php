@@ -15,6 +15,6 @@ class FileUploaderService
     public function upload(UploadedFile $file, string $path): string
     {
         $filename = $path . '.' . $file->getClientOriginalExtension();
-        return $file->storeAs('uploads', $filename);
+        return $file->storeAs(config('file-upload.upload_dir'), $filename);
     }
 }
