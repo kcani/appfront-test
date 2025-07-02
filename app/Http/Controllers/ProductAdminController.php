@@ -6,6 +6,7 @@ use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Services\Product\ProductCreateService;
 use App\Services\Product\ProductReadService;
+use App\Services\Product\ProductUpdateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
@@ -18,7 +19,8 @@ class ProductAdminController extends Controller
 {
     public function __construct(
         private readonly ProductReadService $productReadService,
-        private readonly ProductCreateService $productCreateService
+        private readonly ProductCreateService $productCreateService,
+        private readonly ProductUpdateService $productUpdateService
     )
     {
     }
@@ -79,37 +81,7 @@ class ProductAdminController extends Controller
      */
     public function update(ProductUpdateRequest $productUpdateRequest, Product $product): \Illuminate\Http\RedirectResponse
     {
-        // Store the old price before updating
-        $oldPrice = $product->price;
-
-        $product->fill($productUpdateRequest->validated());
-        $product->save();
-
-        if ($productUpdateRequest->hasFile('image')) {
-            $file = $productUpdateRequest->file('image');
-            $filename = $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $filename);
-            $product->image = 'uploads/' . $filename;
-        }
-
-        $product->save();
-
-        // Check if price has changed
-        if ($oldPrice != $product->price) {
-            // Get notification email from env
-            $notificationEmail = env('PRICE_NOTIFICATION_EMAIL', 'admin@example.com');
-
-            try {
-                SendPriceChangeNotification::dispatch(
-                    $product,
-                    $oldPrice,
-                    $product->price,
-                    $notificationEmail
-                );
-            } catch (\Exception $e) {
-                 Log::error('Failed to dispatch price change notification: ' . $e->getMessage());
-            }
-        }
+        $this->productUpdateService->update($product, $productUpdateRequest->validated());
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully');
     }

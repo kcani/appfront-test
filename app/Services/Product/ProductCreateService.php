@@ -3,6 +3,7 @@
 namespace App\Services\Product;
 
 use App\Models\Product;
+use App\Services\FileUploaderService;
 use Illuminate\Http\UploadedFile;
 
 class ProductCreateService
@@ -17,9 +18,11 @@ class ProductCreateService
     {
         $product = new Product();
         if (array_key_exists('image', $data) && $data['image'] instanceof UploadedFile) {
-            $filename = $data['image']->getClientOriginalExtension();
-            $data['image']->move(public_path('uploads'), $filename);
-            $data['image'] = 'uploads/' . $filename;
+            /**
+             * @var FileUploaderService $imageUploaderService
+             */
+            $fileUploaderService = app(FileUploaderService::class);
+            $data['image'] = $fileUploaderService->upload($data['image']);
         } else {
             $data['image'] = 'product-placeholder.jpg';
         }
