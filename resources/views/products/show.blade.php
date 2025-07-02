@@ -14,7 +14,7 @@
             </div>
             <div class="product-detail-info">
                 <h1 class="product-detail-title">{{ $product->name }}</h1>
-                <p class="product-id">Product ID: {{ $product->id }}</p>
+                <p class="product-id">{{ __('models/product.product_id') }}: {{ $product->id }}</p>
 
                 <div class="price-container">
                     <span class="price-{{ strtolower($exchangeRate['from']) }}">{{ $exchangeRate['from_symbol'] }}{{ number_format($product->price, 2) }}</span>
@@ -24,17 +24,17 @@
                 <div class="divider"></div>
 
                 <div class="product-detail-description">
-                    <h4 class="description-title">Description</h4>
+                    <h4 class="description-title">{{ __('models/product.description') }}</h4>
                     <p>{{ $product->description }}</p>
                 </div>
 
                 <div class="action-buttons">
-                    <a href="{{ url('/') }}" class="btn btn-secondary">Back to Products</a>
-                    <button class="btn btn-primary">Add to Cart</button>
+                    <a href="{{ url('/') }}" class="btn btn-secondary">{{ __('modules/product.back_to_products') }}</a>
+                    <button class="btn btn-primary">{{ __('modules/product.add_to_cart') }}</button>
                 </div>
 
                 <p class="exchange-rate">
-                    Exchange Rate: 1 {{ $exchangeRate['from'] }} = {{ number_format($exchangeRate['value'], 4) }} {{ $exchangeRate['to'] }}
+                    {{ __('modules/product.exchange_rate', ['from' => $exchangeRate['from'], 'to' => $exchangeRate['to'], 'value' => number_format($exchangeRate['value'], 4)]) }}
                 </p>
             </div>
         </div>

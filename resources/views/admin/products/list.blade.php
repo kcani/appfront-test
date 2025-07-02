@@ -1,17 +1,17 @@
 @extends('layouts.admin')
 
 @section('title')
-Admin - Products
+    {{ __('modules/product.admin_products') }}
 @endsection
 
 
 @section('content')
 <div class="admin-list-container">
         <div class="admin-header">
-            <h1>Admin - Products</h1>
+            <h1>{{ __('modules/product.admin_products') }}</h1>
             <div>
-                <a href="{{ route('admin.products.create') }}" class="btn btn-primary">Add New Product</a>
-                <a href="{{ route('logout') }}" class="btn btn-secondary">Logout</a>
+                <a href="{{ route('admin.products.create') }}" class="btn btn-primary">{{ __('modules/product.add_new_product') }}</a>
+                <a href="{{ route('logout') }}" class="btn btn-secondary">{{ __('general.logout') }}</a>
             </div>
         </div>
 
@@ -24,11 +24,11 @@ Admin - Products
         <table class="admin-table">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Actions</th>
+                <th>{{ __('models/product.id') }}</th>
+                <th>{{ __('models/product.image') }}</th>
+                <th>{{ __('models/product.name') }}</th>
+                <th>{{ __('models/product.price') }}</th>
+                <th>{{ __('general.actions') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -36,20 +36,20 @@ Admin - Products
                 <tr>
                     <td>{{ $product->id }}</td>
                     <td>
-                        @if($product->image)
-                            <img src="{{ env('APP_URL') }}/{{ $product->image }}" width="50" height="50" alt="{{ $product->name }}">
+                        @if($product->image_url)
+                            <img src="{{ $product->image_url }}" width="50" height="50" alt="{{ $product->name }}">
                         @endif
                     </td>
                     <td>{{ $product->name }}</td>
                     <td>${{ number_format($product->price, 2) }}</td>
                     <td>
-                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary">Edit</a>
+                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary">{{ __('general.edit') }}</a>
                         <a
                             href="#"
                             class="btn btn-secondary"
                             onclick="event.preventDefault(); deleteProduct({{ $product->id }});"
                         >
-                            Delete
+                            {{ __('general.delete') }}
                         </a>
                     </td>
                 </tr>
@@ -65,7 +65,7 @@ Admin - Products
 @section('scripts')
     <script>
         function deleteProduct (id) {
-            if (confirm('Are you sure you want to delete this product?')) {
+            if (confirm('{{ __('modules/product.delete_product_question') }}')) {
                 const form = document.createElement('form');
                 form.action = '{{ route('admin.products.destroy', ':id') }}'.replace(':id', id);
                 form.method = 'POST';
