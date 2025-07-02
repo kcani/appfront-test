@@ -13,7 +13,7 @@ class ProductDeleteService
 
         // Remove the image.
         if ($product->image && Storage::exists($product->image)) {
-            Storage::exists($product->image);
+            Storage::delete($product->image);
         }
     }
 }
