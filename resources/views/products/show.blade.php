@@ -8,8 +8,8 @@
 <div class="container">
         <div class="product-detail">
             <div>
-                @if ($product->image)
-                    <img src="{{ env('APP_URL') }}/{{ $product->image }}" class="product-detail-image">
+                @if ($product->image_url)
+                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="product-detail-image">
                 @endif
             </div>
             <div class="product-detail-info">

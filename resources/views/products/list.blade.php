@@ -11,8 +11,8 @@ Products
         <div class="products-grid">
             @forelse ($products as $product)
                 <div class="product-card">
-                    @if ($product->image)
-                        <img src="{{ env('APP_URL') }}/{{ $product->image }}" class="product-image" alt="{{ $product->name }}">
+                    @if ($product->image_url)
+                        <img src="{{ $product->image_url }}" class="product-image" alt="{{ $product->name }}">
                     @endif
                     <div class="product-info">
                         <h2 class="product-title">{{ $product->name }}</h2>
