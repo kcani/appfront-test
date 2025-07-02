@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+    appfront_laravel_app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: appfront_laravel_app
+        restart: unless-stopped
+        volumes:
+            - ./:/var/www/html
+        ports:
+            - "8555:8000"
+        depends_on:
+            - appfront_db
+
+    appfront_db:
+        image: mysql:8.0
+        container_name: appfront_db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: appfront_db
+            MYSQL_ROOT_PASSWORD: appfront_db_pass
+            MYSQL_USER: appfront_db
+            MYSQL_PASSWORD: appfront_db_user_pass
+        ports:
+            - "33888:3306"
+        volumes:
+            - db_data:/var/lib/mysql
+
+    appfront_redis:
+        container_name: appfront_redis
+        image: 'redis:alpine'
+        ports:
+            - "63709:6379"
+        environment:
+            - SHELL=/bin/bash
+volumes:
+    db_data:
