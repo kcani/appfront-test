@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Product\ProductReadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
@@ -12,12 +13,28 @@ use Illuminate\Support\Facades\View;
 
 class ProductAdminController extends Controller
 {
-    public function index(): \Illuminate\Contracts\View\View
+    public function __construct(private readonly ProductReadService $productReadService)
     {
-        $products = Product::all();
+    }
+
+    /**
+     * Returns the table view with products.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function index(Request $request): \Illuminate\Contracts\View\View
+    {
+        $products = $this->productReadService->paginate(10, $request->page ?: 1);
+
         return View::make('admin.products.list', compact('products'));
     }
 
+    /**
+     * Returns the view with the form to add a new product.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create(): \Illuminate\Contracts\View\View
     {
         return View::make('admin.products.create');
