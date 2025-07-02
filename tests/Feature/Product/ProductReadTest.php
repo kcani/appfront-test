@@ -1,0 +1,138 @@
+<?php
+
+namespace Tests\Feature\Product;
+
+use App\Models\Product;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Tests\Feature\BaseTest;
+
+class ProductReadTest extends BaseTest
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->createProducts();
+    }
+
+    private function createProducts(): void
+    {
+        for ($i = 1; $i <= 20; $i++) {
+            $this->actingAs($this->user)
+                ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+                ->post('/admin/products', [
+                    'name' => "Product {$i}",
+                    'description' => "Product {$i} Desc",
+                    'price' => $i * 10,
+                    'image' => UploadedFile::fake()->image("test-{$i}.png")
+                ]);
+        }
+    }
+
+    public function test_get_products_list_admin_page(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+            ->get('admin/products');
+
+        $response->assertStatus(200);
+
+        /**
+         * @var LengthAwarePaginator $products
+         */
+        $products = $response->viewData('products');
+        $this->assertCount(10, $products->items());
+        $this->assertEquals(20, $products->total());
+    }
+
+    public function test_get_product_admin_edit_page(): void
+    {
+        $product = Product::query()->first();
+
+        $response = $this->actingAs($this->user)
+            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+            ->get("admin/products/{$product->id}/edit");
+
+        $response->assertStatus(200);
+
+        /**
+         * @var Product $viewProduct
+         */
+        $viewProduct =  $response->viewData('product');
+        $this->assertEquals($product->name, $viewProduct->name);
+        $this->assertEquals($product->description, $viewProduct->description);
+        $this->assertEquals($product->price, $viewProduct->price);
+        $this->assertEquals($product->image, $viewProduct->image);
+    }
+
+    public function test_get_product_admin_edit_page_with_not_existing_product(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+            ->get("admin/products/2000/edit");
+        $response->assertStatus(404);
+    }
+
+    public function test_get_product_admin_create_page(): void
+    {
+        $response = $this->actingAs($this->user)
+            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+            ->get("admin/products/create");
+        $response->assertStatus(200);
+    }
+
+    public function test_get_products_list_guest_page(): void
+    {
+        $response = $this
+            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+            ->get('/');
+
+        $response->assertStatus(200);
+
+        /**
+         * @var LengthAwarePaginator $products
+         */
+        $products = $response->viewData('products');
+        $this->assertCount(9, $products->items());
+        $this->assertEquals(20, $products->total());
+    }
+
+    public function test_get_product_guest_page(): void
+    {
+        $product = Product::query()->first();
+
+        $response = $this
+            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+            ->get("/products/{$product->id}");
+
+        $response->assertStatus(200);
+
+        /**
+         * @var Product $viewProduct
+         */
+        $viewProduct =  $response->viewData('product');
+        $this->assertEquals($product->name, $viewProduct->name);
+        $this->assertEquals($product->description, $viewProduct->description);
+        $this->assertEquals($product->price, $viewProduct->price);
+        $this->assertEquals($product->image, $viewProduct->image);
+    }
+
+    public function test_get_product_guest_page_with_not_existing_product(): void
+    {
+        $response = $this
+            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
+            ->get("/products/2000");
+
+        $response->assertStatus(404);
+    }
+
+    public function test_get_product_image(): void
+    {
+        $product = Product::query()->first();
+
+        $response = $this->get("/products/{$product->id}/image");
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'image/png');
+        $response->assertHeader('Content-Disposition', "inline; filename={$product->id}.png");
+    }
+}
