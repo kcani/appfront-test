@@ -52,7 +52,7 @@
 
         <div class="price-change">
             <p><strong>Old Price:</strong> <span class="old-price">${{ number_format($oldPrice, 2) }}</span></p>
-            <p><strong>New Price:</strong> <span class="new-price">${{ number_format($newPrice, 2) }}</span></p>
+            <p><strong>New Price:</strong> <span class="new-price">${{ number_format($product->price, 2) }}</span></p>
         </div>
 
         <p>Thank you for your attention to this update.</p>

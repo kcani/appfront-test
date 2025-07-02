@@ -2,36 +2,30 @@
 
 namespace App\Jobs;
 
+use App\Services\Product\ProductReadService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use App\Mail\PriceChangeNotification;
-use App\Models\Product;
 
 class SendPriceChangeNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
 
-    protected $product;
-    protected $oldPrice;
-    protected $newPrice;
-    protected $email;
+    protected int $productId;
+    protected float $oldPrice;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($product, $oldPrice, $newPrice, $email)
+    public function __construct(int $productId, float $oldPrice)
     {
-        $this->product = $product;
+        $this->productId = $productId;
         $this->oldPrice = $oldPrice;
-        $this->newPrice = $newPrice;
-        $this->email = $email;
     }
 
     /**
@@ -39,14 +33,16 @@ class SendPriceChangeNotification implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-            Mail::to($this->email)
-                ->send(new PriceChangeNotification(
-                    $this->product,
-                    $this->oldPrice,
-                    $this->newPrice
-                ));
-
+        $notificationEmail = env('PRICE_NOTIFICATION_EMAIL', 'admin@example.com');
+        /**
+         * @var ProductReadService $productReadService
+         */
+        $productReadService = app(ProductReadService::class);
+        $product = $productReadService->readById($this->productId);
+        Mail::to($notificationEmail)->send(
+            new PriceChangeNotification($product, $this->oldPrice)
+        );
     }
 }

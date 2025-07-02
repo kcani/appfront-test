@@ -9,20 +9,18 @@ use App\Models\Product;
 
 class PriceChangeNotification extends Mailable
 {
-    public $product;
-    public $oldPrice;
-    public $newPrice;
+    public Product $product;
+    public float $oldPrice;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($product, $oldPrice, $newPrice)
+    public function __construct(Product $product, float $oldPrice)
     {
         $this->product = $product;
         $this->oldPrice = $oldPrice;
-        $this->newPrice = $newPrice;
     }
 
     /**
@@ -30,9 +28,10 @@ class PriceChangeNotification extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): self
     {
-        return $this->subject('Product Price Change Notification')
-                    ->view('emails.price-change');
+        return $this
+            ->subject('Product Price Change Notification')
+            ->view('emails.price-change');
     }
 }

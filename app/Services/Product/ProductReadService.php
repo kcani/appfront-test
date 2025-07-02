@@ -18,4 +18,15 @@ class ProductReadService
     {
         return Product::query()->paginate($perPage, page: $page);
     }
+
+    /**
+     * Get the product entity by id.
+     *
+     * @param int $id
+     * @return Product
+     */
+    public function readById(int $id): Product
+    {
+        return Product::query()->find($id);
+    }
 }

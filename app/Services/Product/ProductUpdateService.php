@@ -32,21 +32,25 @@ class ProductUpdateService
         $product->save();
 
         if ($notifyWhenPriceChanged && $oldPrice != $product->price) {
-            // Get notification email from env
-            $notificationEmail = env('PRICE_NOTIFICATION_EMAIL', 'admin@example.com');
-
-            try {
-                SendPriceChangeNotification::dispatch(
-                    $product,
-                    $oldPrice,
-                    $product->price,
-                    $notificationEmail
-                );
-            } catch (\Exception $e) {
-                Log::error('Failed to dispatch price change notification: ' . $e->getMessage());
-            }
+            $this->notifyPriceChange($product, $oldPrice);
         }
 
         return $product;
+    }
+
+    /**
+     * Send the email notification for the price change to the admin.
+     *
+     * @param Product $product
+     * @param float $oldPrice
+     * @return void
+     */
+    private function notifyPriceChange(Product $product, float $oldPrice): void
+    {
+        try {
+            SendPriceChangeNotification::dispatch($product->id, $oldPrice);
+        } catch (\Exception $e) {
+            Log::error('Failed to dispatch price change notification: ' . $e->getMessage());
+        }
     }
 }
