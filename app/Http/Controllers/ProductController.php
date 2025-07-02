@@ -3,25 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Libs\ExchangeRateLib;
-use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Services\Product\ProductReadService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function __construct(private readonly ProductReadService $productReadService)
     {
-        $products = Product::query()->paginate(9);
-        $exchangeRate = ExchangeRateLib::get();
-
-        return view('products.list', compact('products', 'exchangeRate'));
     }
 
-    public function show(Request $request)
+    public function index(Request $request): \Illuminate\Contracts\View\View
     {
-        $id = $request->route('product_id');
-        $product = Product::find($id);
+        $products = $this->productReadService->paginate(9, $request->page);
+        $exchangeRate = ExchangeRateLib::get();
+        return View::make('products.list', compact('products', 'exchangeRate'));
+    }
+
+    public function show(Product $product): \Illuminate\Contracts\View\View
+    {
         $exchangeRate = ExchangeRateLib::get();
 
-        return view('products.show', compact('product', 'exchangeRate'));
+        return View::make('products.show', compact('product', 'exchangeRate'));
     }
 }
