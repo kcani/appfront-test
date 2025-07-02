@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Product;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use App\Jobs\SendPriceChangeNotification;
+use App\Http\Requests\Login\LoginRequest;
+use App\Services\Login\LoginService;
 use Illuminate\Support\Facades\View;
 
 class LoginController extends Controller
 {
+    public function __construct(private readonly LoginService $loginService)
+    {
+    }
+
     /**
      * Get the login view.
      *
@@ -25,16 +25,16 @@ class LoginController extends Controller
     /**
      * Perform the login.
      *
-     * @param Request $request
+     * @param LoginRequest $loginRequest
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function login(Request $request): \Illuminate\Http\RedirectResponse
+    public function login(LoginRequest $loginRequest): \Illuminate\Http\RedirectResponse
     {
-        if (Auth::attempt($request->except('_token'))) {
-            return redirect()->route('admin.products');
+        if (!$this->loginService->login($loginRequest->email, $loginRequest->password)) {
+            return redirect()->back()->with('error', 'Invalid login credentials');
         }
 
-        return redirect()->back()->with('error', 'Invalid login credentials');
+        return redirect()->route('admin.products');
     }
 
     /**
@@ -44,7 +44,7 @@ class LoginController extends Controller
      */
     public function logout(): \Illuminate\Http\RedirectResponse
     {
-        Auth::logout();
+        $this->loginService->logout();
 
         return redirect()->route('login');
     }
