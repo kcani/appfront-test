@@ -12,3 +12,4 @@
 9. Run the application on: http://localhost:8555
 10. If you get a permission error check the permissions of the ./storage directory
 11. To compile/watch the assets, in a container terminal run: "npm run build". If you want to listen to the assets change run: "npm run build -- --watch"
+12. For running the test, create a sqlite database file in: "database/database.sqlite". Then inside the container terminal run: "php artisan test"
