@@ -19,7 +19,7 @@ Products
                         <p class="product-description">{{ Str::limit($product->description, 100) }}</p>
                         <div class="price-container">
                             <span class="price-usd">${{ number_format($product->price, 2) }}</span>
-                            <span class="price-eur">€{{ number_format($product->price * $exchangeRate, 2) }}</span>
+                            <span class="price-eur">€{{ number_format($product->price * $exchangeRate['value'], 2) }}</span>
                         </div>
                         <a href="{{ route('products.show', $product) }}" class="btn btn-primary">View Details</a>
                     </div>
@@ -34,8 +34,8 @@ Products
         {!! $products->links() !!}
         @endif
 
-        <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: #7f8c8d;">
-            <p>Exchange Rate: 1 USD = {{ number_format($exchangeRate, 4) }} EUR</p>
+        <div class="exchange-rate centered">
+            <p>Exchange Rate: 1 {{ $exchangeRate['from'] }} = {{ number_format($exchangeRate['value'], 4) }} {{ $exchangeRate['to'] }}</p>
         </div>
     </div>
 @endsection

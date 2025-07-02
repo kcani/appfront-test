@@ -16,9 +16,9 @@ class ExchangeRateLib
      * @param string|null $from
      * @param string|null $to
      * @param bool $useCachedResult
-     * @return float
+     * @return array{value: float, from: string, to: string}
      */
-    public static function get(string $from = null, string $to = null, bool $useCachedResult = true): float
+    public static function get(string $from = null, string $to = null, bool $useCachedResult = true): array
     {
         $from = $from ?: Config::get('external.exchange-rate.base_from_currency');
         $to = $to ?: Config::get('external.exchange-rate.base_to_currency');
@@ -26,10 +26,15 @@ class ExchangeRateLib
         $cacheKey = self::getCacheKey($from);
 
         $fromInUpperCase = strtoupper($from);
+        $toInUpperCase = strtoupper($to);
 
         // If cached result will be used, check if the result is cached before and return its value.
         if ($useCachedResult && Cache::has($cacheKey)) {
-            return Cache::get($cacheKey)[$fromInUpperCase];
+            return [
+                'value' => Cache::get($cacheKey)[$fromInUpperCase],
+                'from' => $fromInUpperCase,
+                'to' => $toInUpperCase
+            ];
         }
 
         $failed = false;
@@ -70,12 +75,15 @@ class ExchangeRateLib
         // Cache the result for a short time, because the exchange rate changes very often.
         Cache::put($cacheKey, $exchangeRates, now()->addMinutes(10));
 
-        $toInUpperCase = strtoupper($to);
         if (!isset($exchangeRates[$toInUpperCase])) {
             throw new \RuntimeException("Currency: {$toInUpperCase} is not supported.");
         }
 
-        return $exchangeRates[$toInUpperCase];
+        return [
+            'value' => $exchangeRates[$toInUpperCase],
+            'from' => $fromInUpperCase,
+            'to' => $toInUpperCase
+        ];
     }
 
     /**

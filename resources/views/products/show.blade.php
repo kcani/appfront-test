@@ -18,7 +18,7 @@
 
                 <div class="price-container">
                     <span class="price-usd">${{ number_format($product->price, 2) }}</span>
-                    <span class="price-eur">€{{ number_format($product->price * $exchangeRate, 2) }}</span>
+                    <span class="price-eur">€{{ number_format($product->price * $exchangeRate['value'], 2) }}</span>
                 </div>
 
                 <div class="divider"></div>
@@ -33,8 +33,8 @@
                     <button class="btn btn-primary">Add to Cart</button>
                 </div>
 
-                <p style="margin-top: 20px; font-size: 0.9rem; color: #7f8c8d;">
-                    Exchange Rate: 1 USD = {{ number_format($exchangeRate, 4) }} EUR
+                <p class="exchange-rate">
+                    Exchange Rate: 1 {{ $exchangeRate['from'] }} = {{ number_format($exchangeRate['value'], 4) }} {{ $exchangeRate['to'] }}
                 </p>
             </div>
         </div>
