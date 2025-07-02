@@ -42,8 +42,8 @@ Edit Product
 
             <div class="form-group">
                 <label for="image">Current Image</label>
-                @if($product->image)
-                    <img src="{{ env('APP_URL') }}/{{ $product->image }}" class="product-image" alt="{{ $product->name }}">
+                @if($product->image_url)
+                    <img src="{{ $product->image_url }}" class="product-image" alt="{{ $product->name }}">
                 @endif
                 <input type="file" id="image" name="image" class="form-control">
                 <small>Leave empty to keep current image</small>

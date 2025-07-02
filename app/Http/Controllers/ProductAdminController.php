@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Product\ProductStoreRequest;
+use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Services\Product\ProductReadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,27 +42,22 @@ class ProductAdminController extends Controller
         return View::make('admin.products.create');
     }
 
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    /**
+     * Save a new product entity.
+     *
+     * @param ProductStoreRequest $productStoreRequest
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(ProductStoreRequest $productStoreRequest): \Illuminate\Http\RedirectResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
         $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price
+            'name' => $productStoreRequest->name,
+            'description' => $productStoreRequest->description,
+            'price' => $productStoreRequest->price
         ]);
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
+        if ($productStoreRequest->hasFile('image')) {
+            $file = $productStoreRequest->file('image');
             $filename = $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $product->image = 'uploads/' . $filename;
@@ -73,35 +70,34 @@ class ProductAdminController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Product added successfully');
     }
 
-    public function edit($id): \Illuminate\Contracts\View\View
+    /**
+     * Returns the view to update an existing product.
+     *
+     * @param Product $product
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function edit(Product $product): \Illuminate\Contracts\View\View
     {
-        $product = Product::find($id);
         return View::make('admin.products.edit', compact('product'));
     }
 
-    public function update(Request $request, $id): \Illuminate\Http\RedirectResponse
+    /**
+     * Perform the update of an existing product,
+     *
+     * @param ProductUpdateRequest $productUpdateRequest
+     * @param Product $product
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update(ProductUpdateRequest $productUpdateRequest, Product $product): \Illuminate\Http\RedirectResponse
     {
-        // Validate the name field
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        $product = Product::find($id);
-
         // Store the old price before updating
         $oldPrice = $product->price;
 
-        $product->update($request->all());
+        $product->fill($productUpdateRequest->validated());
+        $product->save();
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
+        if ($productUpdateRequest->hasFile('image')) {
+            $file = $productUpdateRequest->file('image');
             $filename = $file->getClientOriginalExtension();
             $file->move(public_path('uploads'), $filename);
             $product->image = 'uploads/' . $filename;
@@ -129,9 +125,14 @@ class ProductAdminController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully');
     }
 
-    public function destroy($id): \Illuminate\Http\RedirectResponse
+    /**
+     * Perform the delete of the existing product.
+     *
+     * @param Product $product
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(Product $product): \Illuminate\Http\RedirectResponse
     {
-        $product = Product::find($id);
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully');
