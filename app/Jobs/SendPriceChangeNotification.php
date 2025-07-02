@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PriceChangeNotification;
 
@@ -35,7 +36,7 @@ class SendPriceChangeNotification implements ShouldQueue
      */
     public function handle(): void
     {
-        $notificationEmail = env('PRICE_NOTIFICATION_EMAIL', 'admin@example.com');
+        $notificationEmail = Config::get('notifications.price_change_email_receiver');
         /**
          * @var ProductReadService $productReadService
          */
