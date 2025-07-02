@@ -5,14 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Services\Product\ProductCreateService;
+use App\Services\Product\ProductDeleteService;
 use App\Services\Product\ProductReadService;
 use App\Services\Product\ProductUpdateService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use App\Jobs\SendPriceChangeNotification;
 use Illuminate\Support\Facades\View;
 
 class ProductAdminController extends Controller
@@ -20,7 +17,8 @@ class ProductAdminController extends Controller
     public function __construct(
         private readonly ProductReadService $productReadService,
         private readonly ProductCreateService $productCreateService,
-        private readonly ProductUpdateService $productUpdateService
+        private readonly ProductUpdateService $productUpdateService,
+        private readonly ProductDeleteService $productDeleteService,
     )
     {
     }
@@ -87,14 +85,14 @@ class ProductAdminController extends Controller
     }
 
     /**
-     * Perform the delete of the existing product.
+     * Perform the remove of the existing product.
      *
      * @param Product $product
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Product $product): \Illuminate\Http\RedirectResponse
     {
-        $product->delete();
+        $this->productDeleteService->delete($product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully');
     }

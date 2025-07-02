@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Log;
 
 class ProductUpdateService
 {
+    /**
+     * Updates an existing product entity.
+     *
+     * @param Product $product
+     * @param array $data
+     * @param bool $notifyWhenPriceChanged
+     * @return Product
+     */
     public function update(Product $product, array $data, bool $notifyWhenPriceChanged = true): Product
     {
         $oldPrice = $product->price;

@@ -18,6 +18,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Product extends Model
 {
+    /**
+     * This is the image path of tha image used as default for the product entities.
+     */
     const DEFAULT_IMAGE_NAME = 'product-placeholder.jpg';
 
     /**
