@@ -6,8 +6,10 @@ RUN apt-get update -y && \
         libpng-dev \
         unzip \
         libzip-dev \
+        pkg-config \
+        libicu-dev \
         redis-tools && \
-    docker-php-ext-install pdo pdo_mysql gd zip && \
+    docker-php-ext-install pdo pdo_mysql gd zip intl && \
     pecl install redis && docker-php-ext-enable redis
 
 # Optional: PCNTL (for CLI workers only, not needed for Apache)

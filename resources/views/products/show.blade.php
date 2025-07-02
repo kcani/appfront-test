@@ -17,8 +17,8 @@
                 <p class="product-id">Product ID: {{ $product->id }}</p>
 
                 <div class="price-container">
-                    <span class="price-usd">${{ number_format($product->price, 2) }}</span>
-                    <span class="price-eur">€{{ number_format($product->price * $exchangeRate['value'], 2) }}</span>
+                    <span class="price-{{ strtolower($exchangeRate['from']) }}">{{ $exchangeRate['from_symbol'] }}{{ number_format($product->price, 2) }}</span>
+                    <span class="price-{{ strtolower($exchangeRate['to']) }}">{{ $exchangeRate['to_symbol'] }}{{ number_format($product->price * $exchangeRate['value'], 2) }}</span>
                 </div>
 
                 <div class="divider"></div>

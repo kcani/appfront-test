@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Symfony\Component\Intl\Currencies;
 
 class ExchangeRateLib
 {
@@ -16,7 +17,7 @@ class ExchangeRateLib
      * @param string|null $from
      * @param string|null $to
      * @param bool $useCachedResult
-     * @return array{value: float, from: string, to: string}
+     * @return array{value: float, from: string, from_symbol: string, to: string, to_symbol: string}
      */
     public static function get(string $from = null, string $to = null, bool $useCachedResult = true): array
     {
@@ -30,11 +31,7 @@ class ExchangeRateLib
 
         // If cached result will be used, check if the result is cached before and return its value.
         if ($useCachedResult && Cache::has($cacheKey)) {
-            return [
-                'value' => Cache::get($cacheKey)[$fromInUpperCase],
-                'from' => $fromInUpperCase,
-                'to' => $toInUpperCase
-            ];
+            return self::getResult(Cache::get($cacheKey)[$fromInUpperCase], $fromInUpperCase, $toInUpperCase);
         }
 
         $failed = false;
@@ -79,10 +76,27 @@ class ExchangeRateLib
             throw new \RuntimeException("Currency: {$toInUpperCase} is not supported.");
         }
 
+        return self::getResult($exchangeRates[$toInUpperCase], $fromInUpperCase, $toInUpperCase);
+    }
+
+    /**
+     * Get the response array shape.
+     *
+     * @param float $value
+     * @param string $from
+     * @param string $to
+     * @return array{value: float, from: string, from_symbol: string, to: string, to_symbol: string}
+     */
+    private static function getResult(float $value, string $from, string $to): array
+    {
+        $from = strtoupper($from);
+        $to = strtoupper($to);
         return [
-            'value' => $exchangeRates[$toInUpperCase],
-            'from' => $fromInUpperCase,
-            'to' => $toInUpperCase
+            'value' => $value,
+            'from' => $from,
+            'from_symbol' => Currencies::getSymbol($from),
+            'to' => $to,
+            'to_symbol' => Currencies::getSymbol($to)
         ];
     }
 
