@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
+use App\Services\Product\ProductCreateService;
 use App\Services\Product\ProductReadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,10 @@ use Illuminate\Support\Facades\View;
 
 class ProductAdminController extends Controller
 {
-    public function __construct(private readonly ProductReadService $productReadService)
+    public function __construct(
+        private readonly ProductReadService $productReadService,
+        private readonly ProductCreateService $productCreateService
+    )
     {
     }
 
@@ -50,22 +54,7 @@ class ProductAdminController extends Controller
      */
     public function store(ProductStoreRequest $productStoreRequest): \Illuminate\Http\RedirectResponse
     {
-        $product = Product::create([
-            'name' => $productStoreRequest->name,
-            'description' => $productStoreRequest->description,
-            'price' => $productStoreRequest->price
-        ]);
-
-        if ($productStoreRequest->hasFile('image')) {
-            $file = $productStoreRequest->file('image');
-            $filename = $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $filename);
-            $product->image = 'uploads/' . $filename;
-        } else {
-            $product->image = 'product-placeholder.jpg';
-        }
-
-        $product->save();
+        $this->productCreateService->create($productStoreRequest->validated());
 
         return redirect()->route('admin.products.index')->with('success', 'Product added successfully');
     }
