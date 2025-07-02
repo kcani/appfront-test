@@ -74,6 +74,8 @@ class LoginTest extends BaseTest
                 'password' => 'password',
             ]);
 
+        $response->assertStatus(302);
+
         // Check that the user is logged in.
         $this->assertTrue(auth()->check());
 
