@@ -56,7 +56,7 @@ class ProductAdminController extends Controller
     {
         $this->productCreateService->create($productStoreRequest->validated());
 
-        return redirect()->route('admin.products.index')->with('success', 'Product added successfully');
+        return redirect()->route('admin.products.index')->with('success', __('modules/product.product_added_successfully'));
     }
 
     /**
@@ -81,7 +81,7 @@ class ProductAdminController extends Controller
     {
         $this->productUpdateService->update($product, $productUpdateRequest->validated());
 
-        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully');
+        return redirect()->route('admin.products.index')->with('success', __('modules/product.product_updated_successfully'));
     }
 
     /**
@@ -94,6 +94,6 @@ class ProductAdminController extends Controller
     {
         $this->productDeleteService->delete($product);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully');
+        return redirect()->route('admin.products.index')->with('success', __('modules/product.product_deleted_successfully'));
     }
 }

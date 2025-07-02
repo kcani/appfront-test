@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Price Change Notification</title>
+    <title>{{ __('modules/product.price_change_email.title_1') }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,23 +41,23 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Product Price Change Notification</h2>
+            <h2>{{ __('modules/product.price_change_email.title_2') }}</h2>
         </div>
 
-        <p>Hello,</p>
+        <p>{{ __('modules/product.price_change_email.hello') }},</p>
 
-        <p>We wanted to inform you that the price of the following product has been updated:</p>
+        <p>{{ __('modules/product.price_change_email.p1') }}</p>
 
         <h3>{{ $product->name }}</h3>
 
         <div class="price-change">
-            <p><strong>Old Price:</strong> <span class="old-price">${{ number_format($oldPrice, 2) }}</span></p>
-            <p><strong>New Price:</strong> <span class="new-price">${{ number_format($product->price, 2) }}</span></p>
+            <p><strong>{{ __('modules/product.price_change_email.old_price') }}:</strong> <span class="old-price">${{ number_format($oldPrice, 2) }}</span></p>
+            <p><strong>{{ __('modules/product.price_change_email.new_price') }}:</strong> <span class="new-price">${{ number_format($product->price, 2) }}</span></p>
         </div>
 
-        <p>Thank you for your attention to this update.</p>
+        <p>{{ __('modules/product.price_change_email.p2') }}</p>
 
-        <p>Best regards,<br>Your Store Team</p>
+        <p>{{ __('modules/product.price_change_email.best_regards') }},<br>{{ __('modules/product.price_change_email.your_store_team') }}</p>
     </div>
 </body>
 </html>

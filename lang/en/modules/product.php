@@ -13,4 +13,18 @@ return [
     'current_image' => 'Current Image',
     'empty_image_current_message' => 'Leave empty to keep current image',
     'delete_product_question' => 'Are you sure you want to delete this product?',
+    'product_added_successfully' => 'Product added successfully',
+    'product_updated_successfully' => 'Product updated successfully',
+    'product_deleted_successfully' => 'Product deleted successfully',
+    'price_change_email' => [
+        'title_1' => 'Price Change Notification',
+        'title_2' => 'Product Price Change Notification',
+        'hello' => 'Hello',
+        'p1' => 'We wanted to inform you that the price of the following product has been updated:',
+        'old_price' => 'Old Price',
+        'new_price' => 'New Price',
+        'p2' => 'Thank you for your attention to this update.',
+        'best_regards' => 'Best regards',
+        'your_store_team' => 'Your Store Team',
+    ]
 ];

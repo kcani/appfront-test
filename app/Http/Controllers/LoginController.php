@@ -31,7 +31,7 @@ class LoginController extends Controller
     public function login(LoginRequest $loginRequest): \Illuminate\Http\RedirectResponse
     {
         if (!$this->loginService->login($loginRequest->email, $loginRequest->password)) {
-            return redirect()->back()->with('error', 'Invalid login credentials');
+            return redirect()->back()->with('error', __('modules/login.invalid_login_credentials'));
         }
 
         return redirect()->route('admin.products.index');
