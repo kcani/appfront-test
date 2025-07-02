@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): \Illuminate\Contracts\View\View
     {
-        $products = $this->productReadService->paginate(9, $request->page);
+        $products = $this->productReadService->paginate(9, $request->page ?: 1);
         $exchangeRate = ExchangeRateLib::get();
         return View::make('products.list', compact('products', 'exchangeRate'));
     }

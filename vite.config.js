@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 'resources/scss/guest.scss',
                 'resources/scss/admin.scss',
+                'resources/scss/login.scss',
             ],
             refresh: true,
         }),
