@@ -8,7 +8,7 @@ use \App\Http\Controllers\LoginController;
 /**
  * Guest products routes.
  */
-Route::get('/', [ProductController::class, 'index']);
+Route::get('/', [ProductController::class, 'index'])->name('product.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 /**

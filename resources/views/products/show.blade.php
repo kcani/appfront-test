@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <a href="{{ url('/') }}" class="btn btn-secondary">{{ __('modules/product.back_to_products') }}</a>
+                    <a href="{{ route('product.index') }}" class="btn btn-secondary">{{ __('modules/product.back_to_products') }}</a>
                     <button class="btn btn-primary">{{ __('modules/product.add_to_cart') }}</button>
                 </div>
 
