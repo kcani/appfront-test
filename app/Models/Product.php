@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Product extends Model
 {
+    const DEFAULT_IMAGE_NAME = 'product-placeholder.jpg';
+
     /**
      * Define the fillable properties.
      *

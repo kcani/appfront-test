@@ -12,9 +12,9 @@ class FileUploaderService
      * @param UploadedFile $file
      * @return string
      */
-    public function upload(UploadedFile $file): string
+    public function upload(UploadedFile $file, string $prefix): string
     {
-        $filename = $file->getClientOriginalExtension();
+        $filename = $prefix . '.' . $file->getClientOriginalExtension();
         $file->move(public_path('uploads'), $filename);
         return 'uploads/' . $filename;
     }

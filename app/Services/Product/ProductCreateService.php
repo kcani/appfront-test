@@ -17,19 +17,25 @@ class ProductCreateService
     public function create(array $data): Product
     {
         $product = new Product();
+        $file = null;
         if (array_key_exists('image', $data) && $data['image'] instanceof UploadedFile) {
+            $file = $data['image'];
+            unset($data['image']);
+        } else {
+            $data['image'] = Product::DEFAULT_IMAGE_NAME;
+        }
+
+        $product->fill($data);
+        $product->save();
+
+        if ($file) {
             /**
              * @var FileUploaderService $imageUploaderService
              */
             $fileUploaderService = app(FileUploaderService::class);
-            $data['image'] = $fileUploaderService->upload($data['image']);
-        } else {
-            $data['image'] = 'product-placeholder.jpg';
+            $product->image = $fileUploaderService->upload($file, (string) $product->id);
+            $product->save();
         }
-
-        $product->fill($data);
-
-        $product->save();
 
         return $product;
     }
