@@ -31,9 +31,7 @@ class ProductReadTest extends BaseTest
 
     public function test_get_products_list_admin_page(): void
     {
-        $response = $this->actingAs($this->user)
-            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
-            ->get('admin/products');
+        $response = $this->actingAs($this->user)->get('admin/products');
 
         $response->assertStatus(200);
 
@@ -49,9 +47,7 @@ class ProductReadTest extends BaseTest
     {
         $product = Product::query()->first();
 
-        $response = $this->actingAs($this->user)
-            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
-            ->get("admin/products/{$product->id}/edit");
+        $response = $this->actingAs($this->user)->get("admin/products/{$product->id}/edit");
 
         $response->assertStatus(200);
 
@@ -67,25 +63,19 @@ class ProductReadTest extends BaseTest
 
     public function test_get_product_admin_edit_page_with_not_existing_product(): void
     {
-        $response = $this->actingAs($this->user)
-            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
-            ->get("admin/products/2000/edit");
+        $response = $this->actingAs($this->user)->get("admin/products/2000/edit");
         $response->assertStatus(404);
     }
 
     public function test_get_product_admin_create_page(): void
     {
-        $response = $this->actingAs($this->user)
-            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
-            ->get("admin/products/create");
+        $response = $this->actingAs($this->user)->get("admin/products/create");
         $response->assertStatus(200);
     }
 
     public function test_get_products_list_guest_page(): void
     {
-        $response = $this
-            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
-            ->get('/');
+        $response = $this->get('/');
 
         $response->assertStatus(200);
 
@@ -101,9 +91,7 @@ class ProductReadTest extends BaseTest
     {
         $product = Product::query()->first();
 
-        $response = $this
-            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
-            ->get("/products/{$product->id}");
+        $response = $this->get("/products/{$product->id}");
 
         $response->assertStatus(200);
 
@@ -119,9 +107,7 @@ class ProductReadTest extends BaseTest
 
     public function test_get_product_guest_page_with_not_existing_product(): void
     {
-        $response = $this
-            ->withHeaders(['X-CSRF-TOKEN' => csrf_token()])
-            ->get("/products/2000");
+        $response = $this->get("/products/2000");
 
         $response->assertStatus(404);
     }
@@ -134,5 +120,33 @@ class ProductReadTest extends BaseTest
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'image/png');
         $response->assertHeader('Content-Disposition', "inline; filename={$product->id}.png");
+    }
+
+    public function test_read_endpoints_with_not_logged_in_user(): void
+    {
+        // Logout to destroy the session.
+        auth()->logout();
+        $response = $this
+            ->withHeaders([
+                'Accept' => 'application/json'
+            ])
+            ->get('admin/products');
+        $response->assertStatus(401);
+
+        $product = Product::query()->first();
+
+        $response = $this
+            ->withHeaders([
+                'Accept' => 'application/json'
+            ])
+            ->get("admin/products/{$product->id}/edit");
+        $response->assertStatus(401);
+
+        $response = $this
+            ->withHeaders([
+                'Accept' => 'application/json'
+            ])
+            ->get("admin/products/create");
+        $response->assertStatus(401);
     }
 }

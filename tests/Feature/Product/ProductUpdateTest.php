@@ -157,4 +157,18 @@ class ProductUpdateTest extends BaseTest
         $responseObject = json_decode($response->getContent(), true);
         $this->assertEquals('The price field must be a number.', $responseObject['errors']['price'][0]);
     }
+
+    public function test_update_with_not_logged_in_user(): void
+    {
+        auth()->logout();
+        $updateUrl = "/admin/products/{$this->product->id}";
+        $response = $this
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+                'Accept' => 'application/json',
+            ])
+            ->patch($updateUrl, ['name' => 'Test']);
+
+        $response->assertStatus(401);
+    }
 }

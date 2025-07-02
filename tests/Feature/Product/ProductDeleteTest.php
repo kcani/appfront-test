@@ -72,4 +72,17 @@ class ProductDeleteTest extends BaseTest
         // Check that the image still exists.
         $this->assertTrue(Storage::exists($this->product->image));
     }
+
+    public function test_delete_with_not_logged_in_user(): void
+    {
+        auth()->logout();
+        $response = $this
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+                'Accept' => 'application/json'
+            ])
+            ->delete("/admin/products/{$this->product->id}");
+
+        $response->assertStatus(401);
+    }
 }

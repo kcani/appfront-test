@@ -104,4 +104,24 @@ class ProductStoreTest extends BaseTest
         $this->assertEquals('The price field must be a number.', $response['errors']['price'][0]);
         $this->assertEquals('The image field must be an image.', $response['errors']['image'][0]);
     }
+
+    public function test_store_with_not_logged_in_user(): void
+    {
+        auth()->logout();
+        // Test the product create including image.
+        $file = UploadedFile::fake()->image('test.png');
+        $response = $this
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+                'Accept' => 'application/json',
+            ])
+            ->post('/admin/products', [
+                'name' => 'Product 1',
+                'description' => 'Product 1 Desc',
+                'price' => 20,
+                'image' => $file
+            ]);
+
+        $response->assertStatus(401);
+    }
 }
