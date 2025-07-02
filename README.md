@@ -10,4 +10,5 @@
 7. Config the laravel cache: "php artisan config:cache"
 8. Migrate the database: "php artisan migrate --seed"
 9. Run the application on: http://localhost:8555
-10. If you get a permission error check the permissions of the ./storage directory.
+10. If you get a permission error check the permissions of the ./storage directory
+11. To compile/watch the assets, in a container terminal run: "npm run build". If you want to listen to the assets change run: "npm run build -- --watch"

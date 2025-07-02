@@ -5,9 +5,23 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: [
+                'resources/scss/guest.scss'
+            ],
             refresh: true,
         }),
         tailwindcss(),
     ],
+    build: {
+        outDir: 'public/build/assets',
+        manifest: true,
+        emptyOutDir: true,
+        rollupOptions: {
+            output: {
+                entryFileNames: 'js/[name].js',
+                chunkFileNames: 'js/[name].js',
+                assetFileNames: 'css/[name][extname]',
+            },
+        },
+    },
 });
