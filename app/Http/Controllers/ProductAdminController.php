@@ -8,42 +8,23 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Jobs\SendPriceChangeNotification;
+use Illuminate\Support\Facades\View;
 
-class AdminController extends Controller
+class ProductAdminController extends Controller
 {
-    public function loginPage()
-    {
-        return view('login');
-    }
-
-    public function login(Request $request)
-    {
-        if (Auth::attempt($request->except('_token'))) {
-            return redirect()->route('admin.products');
-        }
-
-        return redirect()->back()->with('error', 'Invalid login credentials');
-    }
-
-    public function logout()
-    {
-        Auth::logout();
-        return redirect()->route('login');
-    }
-
-    public function products()
+    public function products(): \Illuminate\Contracts\View\View
     {
         $products = Product::all();
-        return view('admin.products', compact('products'));
+        return View::make('admin.products', compact('products'));
     }
 
-    public function editProduct($id)
+    public function editProduct($id): \Illuminate\Contracts\View\View
     {
         $product = Product::find($id);
-        return view('admin.edit_product', compact('product'));
+        return View::make('admin.edit_product', compact('product'));
     }
 
-    public function updateProduct(Request $request, $id)
+    public function updateProduct(Request $request, $id): \Illuminate\Http\RedirectResponse
     {
         // Validate the name field
         $validator = Validator::make($request->all(), [
@@ -93,7 +74,7 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('success', 'Product updated successfully');
     }
 
-    public function deleteProduct($id)
+    public function deleteProduct($id): \Illuminate\Http\RedirectResponse
     {
         $product = Product::find($id);
         $product->delete();
@@ -101,12 +82,12 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('success', 'Product deleted successfully');
     }
 
-    public function addProductForm()
+    public function addProductForm(): \Illuminate\Contracts\View\View
     {
-        return view('admin.add_product');
+        return View::make('admin.add_product');
     }
 
-    public function addProduct(Request $request)
+    public function addProduct(Request $request): \Illuminate\Http\RedirectResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:3',
