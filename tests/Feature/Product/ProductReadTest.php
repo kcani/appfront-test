@@ -3,7 +3,6 @@
 namespace Tests\Feature\Product;
 
 use App\Facades\ExchangeRate;
-use App\Libs\ExchangeRateLib;
 use App\Models\Product;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
