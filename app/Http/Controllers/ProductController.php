@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Facades\ExchangeRate;
-use App\Libs\ExchangeRateLib;
 use App\Models\Product;
 use App\Services\Product\ProductReadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProductController extends Controller
 {
@@ -40,8 +40,19 @@ class ProductController extends Controller
         return View::make('products.show', compact('product', 'exchangeRate'));
     }
 
+    /**
+     * Get stream response for product image.
+     *
+     * @param Product $product
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
     public function image(Product $product): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        return $this->productReadService->readStreamedImage($product);
+        $imageStreamedResponse = $this->productReadService->readStreamedImage($product);
+        if (!$imageStreamedResponse) {
+            throw new HttpException(404);
+        }
+
+        return $imageStreamedResponse;
     }
 }

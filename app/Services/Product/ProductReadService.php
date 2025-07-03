@@ -31,8 +31,12 @@ class ProductReadService
         return Product::query()->find($id);
     }
 
-    public function readStreamedImage(Product $product): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function readStreamedImage(Product $product): \Symfony\Component\HttpFoundation\StreamedResponse|null
     {
-        return Storage::response($product->image);
+        if ($product->image && Storage::exists($product->image)) {
+            return Storage::response($product->image);
+        }
+
+        return null;
     }
 }
