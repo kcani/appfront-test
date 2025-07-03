@@ -24,9 +24,9 @@ class ProductReadService
      * Get the product entity by id.
      *
      * @param int $id
-     * @return Product
+     * @return Product|null
      */
-    public function readById(int $id): Product
+    public function readById(int $id): Product|null
     {
         return Product::query()->find($id);
     }
