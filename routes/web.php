@@ -15,8 +15,10 @@ Route::get('/products/{product}/image', [ProductController::class, 'image'])->na
 /**
  * Login routes.
  */
-Route::get('/login', [LoginController::class, 'loginPage'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'loginPage'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+});
 
 Route::middleware(['auth'])->group(function () {
     /**

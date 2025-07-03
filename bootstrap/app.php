@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        /**
+         * Redirect already authenticated users to a specific route.
+         */
+        $middleware->redirectUsersTo('/admin/products');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
