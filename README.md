@@ -53,3 +53,5 @@ Your final submission should demonstrate your ability to write clean, secure, an
 8. Dockerized the application. To run the application a docker environment is set up to include the laravel app, mysql and redis.
 9. Implemented tests. All the endpoints are tested and checked by Featured tests.
 10. Implemented the localization. All the text in the entire project are wrapped in translation and the text are moved in "lang" directory.
+11. Add two layouts blade, one for guest pages and the other for the admin pages.
+12. Organise the styles in the resource directory by using scss and by making files organization.
