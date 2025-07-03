@@ -43,6 +43,7 @@ class ProductReadTest extends BaseTest
          * @var LengthAwarePaginator $products
          */
         $products = $response->viewData('products');
+        $this->assertInstanceOf(LengthAwarePaginator::class, $products);
         $this->assertCount(10, $products->items());
         $this->assertEquals(20, $products->total());
     }
@@ -104,6 +105,7 @@ class ProductReadTest extends BaseTest
          * @var LengthAwarePaginator $products
          */
         $products = $response->viewData('products');
+        $this->assertInstanceOf(LengthAwarePaginator::class, $products);
         $this->assertCount(9, $products->items());
         $this->assertEquals(20, $products->total());
 
