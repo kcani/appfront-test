@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Product;
 
+use App\Mail\PriceChangeNotification;
 use App\Models\Product;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\Feature\BaseTest;
 
@@ -62,6 +64,8 @@ class ProductUpdateTest extends BaseTest
      */
     public function test_update_product(): void
     {
+        Mail::fake();
+
         // Check that there's a single entity.
         $this->assertEquals(1, Product::query()->count());
 
@@ -92,6 +96,8 @@ class ProductUpdateTest extends BaseTest
             'price' => 80,
             'image' => UploadedFile::fake()->image('test2.png'),
         ]);
+
+        Mail::assertSent(PriceChangeNotification::class, 2);
     }
 
     public function test_update_product_no_data(): void
