@@ -16,6 +16,7 @@ return [
     'product_added_successfully' => 'Product added successfully',
     'product_updated_successfully' => 'Product updated successfully',
     'product_deleted_successfully' => 'Product deleted successfully',
+    'no_products_found' => 'No products found.',
     'price_change_email' => [
         'title_1' => 'Price Change Notification',
         'title_2' => 'Product Price Change Notification',

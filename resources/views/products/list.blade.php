@@ -26,7 +26,7 @@
                 </div>
             @empty
                 <div class="empty-message">
-                    <p>No products found.</p>
+                    <p>{{ __('modules/product.no_products_found') }}</p>
                 </div>
             @endforelse
         </div>
